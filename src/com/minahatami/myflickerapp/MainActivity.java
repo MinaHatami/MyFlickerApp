@@ -4,12 +4,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ListView;
 
 public class MainActivity extends ListActivity implements
@@ -25,50 +24,35 @@ public class MainActivity extends ListActivity implements
 	}
 
 	@Override
-	protected void onStart() {
-		super.onStart();
+	protected void onResume() {
+		super.onResume();
 
-		initializeListView();
+		if (adapter.getCount() == 0) {
+			// TODO: prepare the data
+			DownloadFilesTask task = new DownloadFilesTask(this);
+			task.execute(new String[] { "http://www.flickr.com/services/feeds/photos_public.gne?tags=soccer&format=json" });
+		}
 	}
 
 	private void initializeListView() {
-		// TODO: prepare the data
-		DownloadFilesTask task = new DownloadFilesTask(this);
-		task.execute(new String[] { "http://www.flickr.com/services/feeds/photos_public.gne?tags=soccer&format=json" });
-
 		// TODO: get listview
 		ListView listView = getListView();
+		
+		// TODO: set header or footer of adapter
+		LayoutInflater inflater = getLayoutInflater();
+		View header = inflater.inflate(R.layout.header, listView, false);
+		listView.addHeaderView(header, null, false);
+		
 		// TODO: set adapter
 		adapter = new MyAdapter(this);
+		
 		// TODO: set listview events
 		listView.setAdapter(adapter);
-		// TODO: set header or footer of adapter
 
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
 	public void onNotify(String response) {
-		// TODO Auto-generated method stub
-		// Log.i("Get URL", "Downloaded string: " + response);
 		String str = response.substring("jsonFlickrFeed(".length(),
 				response.length() - 1);
 		Log.i("Get URL", "Downloaded string: " + str);
@@ -78,15 +62,18 @@ public class MainActivity extends ListActivity implements
 			JSONArray items = jObject.getJSONArray("items");
 			for (int i = 0; i < items.length(); i++) {
 				String title = items.getJSONObject(i).getString("title");
-				String media = items.getJSONObject(i).getString("media");
+				String media = items.getJSONObject(i).getJSONObject("media")
+						.getString("m");
 				String author = items.getJSONObject(i).getString("author");
 				Log.i("title", "title : " + title);
-				FlickerFeedItem flickerFeedItems = new FlickerFeedItem(title,
+
+				FlickerFeedItem flickerFeedItem = new FlickerFeedItem(title,
 						media, author);
-				adapter.add(flickerFeedItems);
-				
+
+				adapter.add(flickerFeedItem);
+
+				// Log.i("onNotify", "items: " + i + title);
 			}
-			
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block

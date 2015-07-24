@@ -26,19 +26,6 @@ public class DownloadFilesTask extends AsyncTask<String, Integer, String> {
 
 	@Override
 	protected String doInBackground(String... urls) {
-		/*
-		 * String response = ""; for (String url : urls) { DefaultHttpClient
-		 * client = new DefaultHttpClient(); HttpGet httpGet = new HttpGet(url);
-		 * try { HttpResponse execute = client.execute(httpGet); InputStream
-		 * content = execute.getEntity().getContent();
-		 * 
-		 * BufferedReader buffer = new BufferedReader( new
-		 * InputStreamReader(content)); String s = ""; while ((s =
-		 * buffer.readLine()) != null) { response += s; }
-		 * 
-		 * } catch (Exception e) { e.printStackTrace(); } } Log.v(TAG,
-		 * "response: " + response.length()); return response;
-		 */
 
 		try {
 			Log.v(TAG, "" + urls[0]);

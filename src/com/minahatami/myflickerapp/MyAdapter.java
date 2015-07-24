@@ -5,13 +5,20 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MyAdapter extends BaseAdapter {
+	private static final int THUMBSIZE = 120;
+	private static final String TAG = "MyAdapter";
 	private Context mContext;
 	List<FlickerFeedItem> items = new ArrayList<FlickerFeedItem>();
 
@@ -56,9 +63,9 @@ public class MyAdapter extends BaseAdapter {
 
 			// well set up the ViewHolder
 			viewHolder = new ViewHolder();
-			viewHolder.title = (TextView) view.findViewById(R.id.tvTitle);
-			viewHolder.media = (TextView) view.findViewById(R.id.tvMedia);
-			viewHolder.author = (TextView) view.findViewById(R.id.tvAuthor);
+			viewHolder.tvTitle = (TextView) view.findViewById(R.id.tvTitle);
+			viewHolder.imgView = (ImageView) view.findViewById(R.id.imgView);
+			viewHolder.tvAuthor = (TextView) view.findViewById(R.id.tvAuthor);
 
 			// store the holder with the view.
 			view.setTag(viewHolder);
@@ -71,19 +78,19 @@ public class MyAdapter extends BaseAdapter {
 
 		FlickerFeedItem flickerFeedItem = (FlickerFeedItem) getItem(position);
 
-		/*
-		 * Log.v(TAG, "view is null: " + (view == null)); Log.v(TAG,
-		 * "tvName is null: " + (view.findViewById(R.id.tvName) == null));
-		 */
+		viewHolder.tvTitle.setText(flickerFeedItem.getTitle());
+		viewHolder.tvAuthor.setText(flickerFeedItem.getAuthor());
 
-		viewHolder.title.setText(flickerFeedItem.getTitle());
-		viewHolder.media.setText(flickerFeedItem.getMedia());
-		viewHolder.author.setText(flickerFeedItem.getAuthor());
+		new DownloadImageTask(viewHolder.imgView).execute(flickerFeedItem.getMedia());
+		
+		Log.v(TAG, "currentReceipts.getImage(): " + flickerFeedItem.getMedia());
 
 		return view;
 	}
 
+
 	private class ViewHolder {
-		TextView title, media, author;
+		TextView tvTitle, tvAuthor;
+		ImageView imgView;
 	}
 }
