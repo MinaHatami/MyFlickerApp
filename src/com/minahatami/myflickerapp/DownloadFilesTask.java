@@ -61,7 +61,7 @@ public class DownloadFilesTask extends AsyncTask<String, Integer, String> {
 	@Override
 	protected void onPostExecute(String result) {
 		//super.onPostExecute(result);
-		((DownloadFilesTaskListener)activity).onNotify(result);
+		((INotify)activity).onNotify(result);
 	}
 
 }

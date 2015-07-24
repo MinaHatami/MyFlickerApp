@@ -20,7 +20,7 @@ public class MyAdapter extends BaseAdapter {
 	private static final int THUMBSIZE = 120;
 	private static final String TAG = "MyAdapter";
 	private Context mContext;
-	List<FlickerFeedItem> items = new ArrayList<FlickerFeedItem>();
+	private List<FlickerFeedItem> items = new ArrayList<FlickerFeedItem>();
 
 	public MyAdapter(Context context) {
 		this.mContext = context;
@@ -46,6 +46,13 @@ public class MyAdapter extends BaseAdapter {
 
 	@Override
 	public long getItemId(int position) {
+		
+		Object flickerFeedItem = getItem(position);
+		
+		if (flickerFeedItem != null) {
+			return ((FlickerFeedItem) getItem(position)).getId();
+		}
+		
 		return -1;
 	}
 

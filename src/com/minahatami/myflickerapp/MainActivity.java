@@ -5,14 +5,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ListActivity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
-public class MainActivity extends ListActivity implements
-		DownloadFilesTaskListener {
+public class MainActivity extends ListActivity implements INotify {
 
 	MyAdapter adapter;
 
@@ -34,18 +36,39 @@ public class MainActivity extends ListActivity implements
 		}
 	}
 
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		// super.onListItemClick(l, v, position, id);
+
+		FlickerFeedItem flickerFeedItem = (FlickerFeedItem) adapter
+				.getItem(position);
+		String url = flickerFeedItem.getLink();
+
+		Log.i("onListItemClick", "position: " + position + " , url: " + url);
+
+		Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+		
+		// Verify that the intent will resolve to an acivity
+		if (i.resolveActivity(getPackageManager()) != null) {
+			startActivity(i);
+		}
+		else{
+			Toast.makeText(getApplicationContext(), "Link cannot be opened!", Toast.LENGTH_SHORT).show();
+		}
+	}
+
 	private void initializeListView() {
 		// TODO: get listview
 		ListView listView = getListView();
-		
+
 		// TODO: set header or footer of adapter
 		LayoutInflater inflater = getLayoutInflater();
 		View header = inflater.inflate(R.layout.header, listView, false);
 		listView.addHeaderView(header, null, false);
-		
+
 		// TODO: set adapter
 		adapter = new MyAdapter(this);
-		
+
 		// TODO: set listview events
 		listView.setAdapter(adapter);
 
@@ -62,13 +85,14 @@ public class MainActivity extends ListActivity implements
 			JSONArray items = jObject.getJSONArray("items");
 			for (int i = 0; i < items.length(); i++) {
 				String title = items.getJSONObject(i).getString("title");
+				String link = items.getJSONObject(i).getString("link");
 				String media = items.getJSONObject(i).getJSONObject("media")
 						.getString("m");
 				String author = items.getJSONObject(i).getString("author");
 				Log.i("title", "title : " + title);
 
-				FlickerFeedItem flickerFeedItem = new FlickerFeedItem(title,
-						media, author);
+				FlickerFeedItem flickerFeedItem = new FlickerFeedItem(i, title,
+						link, media, author);
 
 				adapter.add(flickerFeedItem);
 
