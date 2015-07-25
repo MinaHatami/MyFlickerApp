@@ -48,9 +48,10 @@ public class MainActivity extends ListActivity implements INotify {
 
 		Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 		
+		String title = getResources().getString(R.string.chooser_title);
 		// Verify that the intent will resolve to an acivity
 		if (i.resolveActivity(getPackageManager()) != null) {
-			startActivity(i);
+			startActivity(Intent.createChooser(i, title));
 		}
 		else{
 			Toast.makeText(getApplicationContext(), "Link cannot be opened!", Toast.LENGTH_SHORT).show();
@@ -76,6 +77,11 @@ public class MainActivity extends ListActivity implements INotify {
 
 	@Override
 	public void onNotify(String response) {
+		if(response == null || response.isEmpty()){
+			Toast.makeText(getApplicationContext(), "There is no RSS Feed to show!", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		
 		String str = response.substring("jsonFlickrFeed(".length(),
 				response.length() - 1);
 		Log.i("Get URL", "Downloaded string: " + str);

@@ -4,5 +4,6 @@
     <string name="app_name">JSON List</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-
+    <string name="chooser_title">Choose the App</string>
+    
 </resources>
